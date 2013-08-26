@@ -1,0 +1,5 @@
+name 'Island Cherry';
+flav 'Cherry (LA)' => .08;
+flav 'Double Chocolate Clear' => .05; # needs a bit more like 4-5 drops
+flav 'Sucralose Sweetener' => .04;
+flav 'Coconut' => .03;

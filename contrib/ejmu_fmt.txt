@@ -1,0 +1,66 @@
+line in ejmu file (0-based) - value from a test.rec file - comments
+===========================   ==========================   ================
+
+0  99 base mg
+1  18 desired mg
+2  33 amount to make
+3  11 other DW/PGA/ACV/etc.
+
+4  12 flavor 1 percent
+5  7   ''    2
+6  5   ''    3
+7  2   ''    4
+8  0   ''    5
+
+9  French Vanilla  flavor 1 name
+10  Creme Dementhe  ''    2
+11  Whipped Cream   ''    3
+12  Sweetcream      ''    4
+13  flav 5          ''    5
+
+14  71 desired pg
+15  29   ''    vg
+
+16  1 ???    have no clue
+17  0 ???    what these two do
+
+18  48  base pg
+19  52   ''  vg
+
+20  100 flavor 1 pg
+21  100  ''    2
+22  100  ''    3
+23  100  ''    4
+24  100  ''    5
+
+25  0   flavor 1 vg
+26  0    ''    2
+27  0    ''    3
+28  0    ''    4
+29  0    ''    5
+
+30  22 drops  XXX v1 old version did not support 0/0 PG/VG with checkbox
+
+31  0 flavor 1 null pg/vg XXX v2 added 0/0 PG/VG with checkboxes
+32  0  ''    2
+33  0  ''    3
+34  0  ''    4
+35  0  ''    5 XXX end of v2 format
+
+36  2  flavor 6 percent  XXX v3 added 2 more flavors in yet a new format
+37  Flavor 6 '' name
+38  0    ''     pg
+39  0    ''     vg
+40  1    '' null pg/vg
+
+41  3  flavor 7 percent
+42  by: Brenda '' name
+43  100      '' pg
+44  0        '' vg
+45  0        '' null pg/vg  XXX v3 end with notes following
+
+46  notes
+47  go
+48  here
+  ...  XXX no clue how fat it would go
+

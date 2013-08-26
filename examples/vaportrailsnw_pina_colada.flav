@@ -1,0 +1,9 @@
+
+source 'http://www.reddit.com/r/DIY_eJuice/comments/1kbrrk/just_wanted_to_share_our_pina_colada_recipe/';
+name Pina Colada
+flav 'Golden Pineapple (TFA)' => range(.10,.12);
+flav 'Coconut (CAP)' => range(.03,.04);
+flav 'Mt. Dew (TFA)' => .04;
+touch 'Menthol (CUS)' => range(1,2) => drops_per 10;
+touch 'Ethyl Maltol' => 2 => drops_per 10;
+touch 'Sweetener (Sucralose) (TFA)' => 4 => drops_per 10;

@@ -1,0 +1,6 @@
+name 'Green Mallow';
+creator 'Truushot';
+note 'Chunk & Greenman Juice Talk Chat';
+flav 'Kiwi', .10;
+flav 'Key Lime', .05;
+flav 'Marshmallow', .05;

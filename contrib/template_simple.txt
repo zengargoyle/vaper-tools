@@ -1,0 +1,10 @@
+h1 <? $title ?>
+h2 <? $name ?>
+table
+<?
+  for my $row (@table) {
+    $OUT .= sprintf <<'_', @$row;
+tr td %s td %s
+_
+   }
+?>

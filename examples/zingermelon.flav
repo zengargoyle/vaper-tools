@@ -1,0 +1,5 @@
+name 'Zingermelon';
+flav 'Watermelon' => .08;
+flav 'Lemon/Lime' => .04;
+flav 'Sour' => .04;  # steep
+flav 'Sweetener' => .04;

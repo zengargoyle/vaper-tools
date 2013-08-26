@@ -1,0 +1,10 @@
+
+
+# Juice Talk Flash show 2013/08/24
+
+name 'C3';
+flav 'Cheesecake (TFA)' => .1;
+flav 'Black Cherry (LA)' => .08;
+flav 'Ethyl Maltol 20% (CUSTOM)' => .01;
+# note 'needs steeping';
+

@@ -1,0 +1,4 @@
+flav 'French Vanilla' => .12;
+flav 'Creme de Menthe' => .07; # may be too much
+flav 'Whipped Cream' => .05;
+flav 'Sweet Cream' => .05;

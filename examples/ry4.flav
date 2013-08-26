@@ -1,0 +1,5 @@
+name 'RY4';
+flav 'Vanilla' => .08;
+flav 'Caramel' => .08;
+flav 'Tobacco Absolute' => .02;
+flav 'Brown Sugar' => .01;

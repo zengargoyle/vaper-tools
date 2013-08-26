@@ -1,0 +1,448 @@
+#!/usr/bin/env perl
+
+#
+# This file can be executed from the vaper-tools directory:
+# $ perl ./doc/README.pod
+#
+# Skip down to __END__ or use `perldoc README.pod` for the actual
+# documentation stuff.
+#
+
+#
+# These are examples of a lower level of mucking about with
+# App::JuiceCalc internals, bypassing the CLI tools.
+#
+
+use strict;
+use lib 'lib';
+
+#
+# The simple interface used by the tools.
+#
+use App::JuiceCalc::Simple;
+
+name 'Fuzzy Custard';
+flav 'Vanilla Custard (TFA)' => .13;
+flav 'Juicy Peach (TFA)' => .03;
+flav 'Butterscotch (TFA)' => .01;
+
+nic 13, 100, pg => .5, vg => .5;
+fill vg => .3, pg => 1;
+
+size 10;
+
+batch_generate;  # here's where things get calculated and output.
+
+
+print "\n", '=' x 70, "\n\n";
+
+
+#
+# The even lower level internals used by the Simple interface.
+#
+use App::JuiceCalc;
+
+my $vc = Flavor->new(
+  name => 'Vanilla Custard',
+  vendor => 'TFA',
+  contents => { pg => 1 },
+);
+
+my $jp = Flavor->new(
+  name => 'Juicy Peach',
+  vendor => 'TFA',
+  contents => { pg => 1 },
+);
+
+my $bs = Flavor->new(
+  name => 'Butterscotch',
+  vendor => 'TFA',
+  contents => { pg => 1 },
+);
+
+my $flavor_bundle = FlavorBundle->new( name => 'Fuzzy Custard' );
+$flavor_bundle->add_flavor(
+  [ $vc => .13 ],
+  [ $jp => .03 ],
+  [ $bs => .01 ],
+);
+
+my $nic = Nicotine->new(
+  mg => 100,
+  contents => { pg => .5, vg => .5 },
+);
+
+my $mix = Mix->new(
+  flavor => $flavor_bundle,
+  mg => 13,
+  base => $nic,
+);
+
+my $batch = Batch->new(
+  mix => $mix,
+  size => 10,
+);
+
+$batch->emitter( 'Default::default_table' );
+
+$batch->generate;
+
+__END__
+
+=pod
+
+=encoding utf8
+
+=head1 SYNOPSIS
+
+    #!/usr/bin/env perl
+    use strict;
+
+    use App::JuiceCalc::Simple;
+
+    name 'Fuzzy Custard';
+    flav 'Vanilla Custard (TFA)' => .13;
+    flav 'Juicy Peach (TFA)' => .03;
+    flav 'Butterscotch (TFA)' => .01;
+
+    nic 13, 100, pg => .5, vg => .5;
+    fill vg => .3, pg => 1;
+
+    size 10;
+
+    batch_generate;
+
+The program above will output (using the default C<Emitter>) something like the following.
+
+    .-----------------------------------------------.
+    |      Fuzzy Custard 13 mg/ml (70/30 PG/VG)     |
+    +--------------------------------+------+-------+
+    | Flavor                         |   ml | Total |
+    +--------------------------------+------+-------+
+    | PG                             | 4.65 |  4.65 |
+    +--------------------------------+------+-------+
+    | VG                             | 2.35 |  7.00 |
+    +--------------------------------+------+-------+
+    | 100 mg/ml Nicotine 50/50 PG/VG | 1.30 |  8.30 |
+    +--------------------------------+------+-------+
+    | Vanilla Custard (TFA) PG       | 1.30 |  9.60 |
+    +--------------------------------+------+-------+
+    | Juicy Peach (TFA) PG           | 0.30 |  9.90 |
+    +--------------------------------+------+-------+
+    | Butterscotch (TFA) PG          | 0.10 | 10.00 |
+    '--------------------------------+------+-------'
+
+=head1 INTRODUCTION
+
+L<App::JuiceCalc::Simple> is syntactic sugar for the inner workings of
+L<App::JuiceCalc>.  There are currently three additional scripts that
+extend the App::JuiceCalc::Simple interface to make it even easier to
+use.
+
+=head2 jcalc
+
+B<jcalc> makes it simple to keep your recipes (a named set of flavors)
+and your bases (a Nicotine base and desired PG/VG ratio) in plain text files
+and create batches on demand.  The example in the L<SYNOPSIS> would be
+something like.
+
+=over
+
+=item fuzzy_custard.flav
+
+A file with the flavoring.
+
+    name 'Fuzzy Custard';
+    flav 'Vanilla Custard (TFA)' => .13;
+    flav 'Juicy Peach (TFA)' => .03;
+    flav 'Butterscotch (TFA)' => .01;
+
+=item juice_talk_13.base
+
+A file with a Nicotine base and desired PG/VG ratio.
+
+    nic 13, 100, pg => .5, vg => .5;
+    fill vg => .3, pg => 1;
+
+=back
+
+And then you can do this to create a batch (default size: 10).
+
+    $ jcalc -f examples/fuzzy_custard.flav -b examples/juice_talk.base
+
+    .-----------------------------------------------.
+    |      Fuzzy Custard 13 mg/ml (70/30 PG/VG)     |
+    +--------------------------------+------+-------+
+    | Flavor                         |   ml | Total |
+    +--------------------------------+------+-------+
+    | PG                             | 4.65 |  4.65 |
+    +--------------------------------+------+-------+
+    | VG                             | 2.35 |  7.00 |
+    +--------------------------------+------+-------+
+    | 100 mg/ml Nicotine 50/50 PG/VG | 1.30 |  8.30 |
+    +--------------------------------+------+-------+
+    | Vanilla Custard (TFA) PG       | 1.30 |  9.60 |
+    +--------------------------------+------+-------+
+    | Juicy Peach (TFA) PG           | 0.30 |  9.90 |
+    +--------------------------------+------+-------+
+    | Butterscotch (TFA) PG          | 0.10 | 10.00 |
+    '--------------------------------+------+-------'
+
+You can override any of the base settings or the batch size with options.
+
+
+    $ jcalc -f examples/fuzzy_custard.flav \
+      --nic 18,100,pg,1 \
+      --fill vg,.5,pg,1 \
+      -s 15
+
+    .-----------------------------------------.
+    |   Fuzzy Custard 18 mg/ml (50/50 PG/VG)  |
+    +--------------------------+------+-------+
+    | Flavor                   |   ml | Total |
+    +--------------------------+------+-------+
+    | VG                       | 7.50 |  7.50 |
+    +--------------------------+------+-------+
+    | PG                       | 2.25 |  9.75 |
+    +--------------------------+------+-------+
+    | 100 mg/ml Nicotine PG    | 2.70 | 12.45 |
+    +--------------------------+------+-------+
+    | Vanilla Custard (TFA) PG | 1.95 | 14.40 |
+    +--------------------------+------+-------+
+    | Juicy Peach (TFA) PG     | 0.45 | 14.85 |
+    +--------------------------+------+-------+
+    | Butterscotch (TFA) PG    | 0.15 | 15.00 |
+    '--------------------------+------+-------'
+
+See C<jcalc --man> for more details.
+
+=head2 quickmix
+
+B<quickmix> is a tool for making quick batches on the fly.
+
+    $ quickmix n 'Fuzzy Custard' f 'Vanilla Custard (TFA)' 13 \
+      f 'Juicy Peach (TFA)' 3 f 'Butterscotch' 1 nic 13 100 pg 50 vg 50 \
+      r vg 30 pg 100 s 10
+
+    .-----------------------------------------------.
+    |      Fuzzy Custard 13 mg/ml (70/30 PG/VG)     |
+    +--------------------------------+------+-------+
+    | Flavor                         |   ml | Total |
+    +--------------------------------+------+-------+
+    | PG                             | 4.65 |  4.65 |
+    +--------------------------------+------+-------+
+    | VG                             | 2.35 |  7.00 |
+    +--------------------------------+------+-------+
+    | 100 mg/ml Nicotine 50/50 PG/VG | 1.30 |  8.30 |
+    +--------------------------------+------+-------+
+    | Vanilla Custard (TFA) PG       | 1.30 |  9.60 |
+    +--------------------------------+------+-------+
+    | Juicy Peach (TFA) PG           | 0.30 |  9.90 |
+    +--------------------------------+------+-------+
+    | Butterscotch PG                | 0.10 | 10.00 |
+    '--------------------------------+------+-------'
+
+If you play with C<quickmix> enough it may start to make sense.
+
+=head2 ejmu
+
+B<ejmu> can read L<eJuice Me Up|http://ejuice.breaktru.com/>'s recipe files (.rec).  It works like C<jcalc>.
+
+    $ ejmu -f /path/to/Apple\ Pie.rec
+
+    .----------------------------------------------.
+    |       Apple Pie 12 mg/ml (60/40 VG/PG)       |
+    +-------------------------------+------+-------+
+    | Flavor                        |   ml | Total |
+    +-------------------------------+------+-------+
+    | VG                            | 4.33 |  4.33 |
+    +-------------------------------+------+-------+
+    | PG                            | 0.33 |  4.67 |
+    +-------------------------------+------+-------+
+    | 36 mg/ml Nicotine 50/50 PG/VG | 3.33 |  8.00 |
+    +-------------------------------+------+-------+
+    | Apple PG                      | 1.30 |  9.30 |
+    +-------------------------------+------+-------+
+    | Cinnamon PG                   | 0.64 |  9.94 |
+    +-------------------------------+------+-------+
+    | Cheesecake PG                 | 0.06 | 10.00 |
+    '-------------------------------+------+-------'
+
+    $ ejmu -f /path/to/Apple\ Pie.rec --nic 18,100,pg,1 --size 15
+
+    .--------------------------------------.
+    |   Apple Pie 18 mg/ml (60/40 VG/PG)   |
+    +-----------------------+------+-------+
+    | Flavor                |   ml | Total |
+    +-----------------------+------+-------+
+    | VG                    | 9.00 |  9.00 |
+    +-----------------------+------+-------+
+    | PG                    | 0.30 |  9.30 |
+    +-----------------------+------+-------+
+    | 100 mg/ml Nicotine PG | 2.70 | 12.00 |
+    +-----------------------+------+-------+
+    | Apple PG              | 1.95 | 13.95 |
+    +-----------------------+------+-------+
+    | Cinnamon PG           | 0.96 | 14.91 |
+    +-----------------------+------+-------+
+    | Cheesecake PG         | 0.09 | 15.00 |
+    '-----------------------+------+-------'
+
+I<Warning>: The EJMU recipe file is reverse-engineered, there are a couple
+of values that seem to have no purpose, probably left over from earlier
+versions.  (The file format is a horrid example of a file format.)  But
+C<ejmu> does support EJMU up to version 13.0.0.1.
+
+=head1 INTERNALS
+
+The C<App::JuiceCalc::Simple> interface is sugar for the B<App::JuiceCalc>
+interface.  The example in the L<SYNOPSIS> would look something like this
+using App::JuiceCalc directly.
+
+    use App::JuiceCalc;
+
+    my $vc = Flavor->new(
+      name => 'Vanilla Custard',
+      vendor => 'TFA',
+      contents => { pg => 1 },
+    );
+
+    my $jp = Flavor->new(
+      name => 'Juicy Peach',
+      vendor => 'TFA',
+      contents => { pg => 1 },
+    );
+
+    my $bs = Flavor->new(
+      name => 'Butterscotch',
+      vendor => 'TFA',
+      contents => { pg => 1 },
+    );
+
+    my $flavor_bundle = FlavorBundle->new(
+      name => 'Fuzzy Custard'
+    );
+
+    $flavor_bundle->add_flavor(
+      [ $vc => .13 ],
+      [ $jp => .03 ],
+      [ $bs => .01 ],
+    );
+
+    my $nic = Nicotine->new(
+      mg => 100,
+      contents => {
+        pg => .5,
+        vg => .5,
+      },
+    );
+
+    my $mix = Mix->new(
+      flavor => $flavor_bundle,
+      mg => 13,
+      base => $nic,
+    );
+
+    my $batch = Batch->new(
+      mix => $mix,
+      size => 10,
+    );
+
+    $batch->emitter( 'Default::default_table' );
+
+    $batch->generate;
+
+=head1 EMITTERS (FORMATTERS)
+
+Output from App::JuiceCalc is done through plugins known as C<Emmiters> or
+sometimes C<Formatters>.  This part is still under development around
+the exact API, but the basic set of emitters C<default_table>,
+C<default_oneline>, C<extra_template> should stay stable.
+
+Future standard-ish emitters will probably include JSON, CSV, etc.
+
+=head2 Default
+
+=over
+
+=item * default_table
+
+The default output at seen all through this document.
+
+=item * default_oneline
+
+Outputs a batch as a single line suitable for cut-n-paste into a
+chat/etc. where a table might not display nicely.
+
+    $ jcalc -f examples/fuzzy_custard.flav -b examples/juice_talk_13.base \
+      --fmt=Default::default_oneline
+
+    # split into multiple lines for readability
+    Fuzzy Custard 13 mg/ml (70/30 PG/VG) |
+    Flavor(ml) Total |
+    PG(4.65) 4.65 |
+    VG(2.35) 7.00 |
+    100 mg/ml Nicotine 50/50 PG/VG(1.30) 8.30 |
+    Vanilla Custard (TFA) PG(1.30) 9.60 |
+    Juicy Peach (TFA) PG(0.30) 9.90 |
+    Butterscotch (TFA) PG(0.10) 10.00
+
+=item * default_ejmu I<*BETA*>
+
+Outputs the lines of an EJMU C<.rec> file.
+
+    $ jcalc ... --fmt=Default::default_ejmu > 'My Recipe.rec'
+
+=item * default_simple_json
+
+A simple JSON output with just enough information to be useful in
+writing tests.  See C<t/04_calc.t> for some examples.
+
+=back
+
+=head2 Extra
+
+=over
+
+=item * extra_template
+
+An C<Emitter> based on L<Text::Template> for custom outputs.
+
+With a template file C<template_simple.txt>.
+
+    h1 <? $title ?>
+    h2 <? $name ?>
+    table
+    <?
+      for my $row (@table) {
+        $OUT .= sprintf <<'_', @$row;
+    tr td %s td %s
+    _
+       }
+    ?>
+
+The command.
+
+    $ jcalc -f examples/fuzzy_custard.flav -b examples/juice_talk_13.base \
+      --fmt=Extra::extra_template,template,contrib/template_simple.txt,outfile,output.txt
+
+Creates C<output.txt> with the following contents.
+
+    h1 Fuzzy Custard 13 mg/ml (70/30 PG/VG)
+    h2 Fuzzy Custard 13 mg/ml (70/30 PG/VG)
+    table
+    tr td PG td 4.65
+    tr td VG td 2.35
+    tr td 100 mg/ml Nicotine 50/50 PG/VG td 1.3
+    tr td Vanilla Custard (TFA) PG td 1.3
+    tr td Juicy Peach (TFA) PG td 0.3
+    tr td Butterscotch (TFA) PG td 0.1
+
+If no C<outfile,$FILENAME> is given, output goes to C<STDOUT>.  See
+L<Text::Template> for more details.
+
+See C<contrib/template_boot.html> for a less contrived template.
+
+=back
+
+=cut
