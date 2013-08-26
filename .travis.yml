@@ -14,5 +14,5 @@ before_install:
 install:
   - cpanm --quiet --notest --local-lib local --installdeps .
 
-script: HARNESS_IS_VERBOSE=1 prove -v -Ilib -Mlib=local t
+script: HARNESS_IS_VERBOSE=1 prove -v -Ilib -Mlib=local/lib/perl5 t
 
