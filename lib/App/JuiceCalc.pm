@@ -87,9 +87,12 @@ sub set_from_file {
 use File::Spec;
 sub BUILD {
   my $self = shift;
-  my $share = File::ShareDir::dist_dir('App-JuiceCalc');
+  my $share;
+  try {
+    $share = File::ShareDir::dist_dir('App-JuiceCalc');
+  };
   my $home = File::HomeDir->my_home;
-  for my $dir ( $share, $home, '.' ) {
+  for my $dir ( ($share)x!!$share, $home, '.' ) {
     for my $file (qw( juicecalc.config .juicecalc.config )) {
       my $path = File::Spec->catfile( $dir, $file );
       if ( -r -f $path ) {
