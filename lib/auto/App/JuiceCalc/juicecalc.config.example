@@ -1,0 +1,43 @@
+# Example juicecalc.config
+# The config files are read from the distribution share directory,
+# the user's home directory, and the current directory in that order with
+# each new config replacing parts of the previous config.
+# The config file may be named 'juicecalc.config' or '.juicecalc.config',
+# with only the first file found in each of the searched directories being
+# used.
+
+# The distribution directory depends on whether or not App::JuiceCalc has
+# been installed or not and can be found something like this...
+#
+# running from a non-installed git checkout / zip / tarball / etc.
+# perl -Ilib -MFile::ShareDir -E 'say File::ShareDir::dist_dir(q(App-JuiceCalc))'
+# lib/auto/App/JuiceCalc
+#
+# an installed version
+# perl -MFile::ShareDir -E 'say File::ShareDir::dist_dir(q(App-JuiceCalc))'
+# /var/local/perl/5.16/lib/site_perl/5.16.2/x86_64-linux/auto/App/JuiceCalc
+
+# the goal being that the global defaults are in SHARE/juicecalc.config,
+# personal customization in $HOME/.juicecalc.config, and temportary changes
+# could be made in a ./juicecalc.config.  savvy?
+
+
+#
+# Actual configuration is made of lines of KEYWORD = VALU pairs thusly:
+
+# default flavoring type
+flavor_carrier = pg,1       # PG flavorings
+
+# default nic base
+base_mg = 100               # 100 mg/ml
+#base_carrier = pg,.5,vg,.5  # 50/50 PG/VG
+base_carrier = pg,1  # i have PG base
+
+# default batch
+mix_mg = 18               # 18 mg/ml
+mix_ratio = vg,.3,pg,1    # 30/70 VG/PG try for 30 VG then fill rest with PG
+batch_size = 10           # 10 ml
+
+# default emitter
+emitter = Default::default_table
+

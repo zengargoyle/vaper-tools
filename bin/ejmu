@@ -1,0 +1,87 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+use FindBin;
+use lib "$FindBin::RealBin/../lib";
+use lib "$FindBin::RealBin/../local";
+
+use App::JuiceCalc::Simple;
+use App::JuiceCalc::EJMUParser;
+use List::AllUtils qw( first );
+
+use Getopt::Long::Descriptive;
+use Pod::Usage;
+my ($opt, $usage) = describe_options(
+  "%c %o <some-arg>",
+  [ 'flavor|f=s', "the EJMU flavor recipe file to mix", { default => 'default.rec' } ],
+  [ 'base|b=s',   "the base file to mix" ],
+  [ 'nic=s',      "base override" ],
+  [ 'fill=s',       "fill override" ],
+  [ 'size|s=i',   "the amount to mix" ],
+  [ 'formatter|fmt=s', "the formatter to use", { default => 'Default::default_table' } ],
+  [],
+  [ 'list-formatters', "list the available formatters and exit" ],
+  [ 'help|h',     "print usage and exit" ],
+  [ 'man',        "print the manual page and exit" ],
+  { getopt_conf => [ 'bundling_override' ] }
+);
+#use Data::Dump; dd [ opt => \%{ $opt } ];
+print($usage->text), exit if $opt->{help};
+pod2usage( -verbose => 2, -noperldoc => 1 ) if $opt->{man};
+
+if ($opt->{list_formatters}) {
+  my $info = list_emitters;
+  for my $f (sort keys %$info) {
+    print "\n";
+    print "$info->{$f}{name}:\n";
+    print "\t$info->{$f}{summary}\n" if $info->{$f}{summary};
+    print "\t$info->{$f}{description}" if $info->{$f}{description};
+    print "\n";
+  }
+  exit;
+}
+
+=head1 SYNOPSIS
+
+=head1 OPTIONS AND ARGUMENTS
+
+=cut
+
+if ($opt->{flavor}) {
+  die "Can't find EJMU recipe file: $opt->{flavor}\n" unless -f $opt->{flavor};
+}
+else {
+  die "No EJMU recipe file given\n";
+}
+
+my $e = App::JuiceCalc::EJMUParser->new_from_file(
+  file => $opt->{flavor},
+  autoname => 1,
+)->sanitize;
+
+name $e->name;
+my $f = $e->flavors;
+for my $fi (0..6) {
+  flav @{ $f->{$fi} } if exists $f->{$fi};
+}
+
+nic $e->target->{mg}, $e->misc->{base}{mg},
+  vg => $e->misc->{base}{vg}/100, pg => $e->misc->{base}{pg}/100;
+
+fill vg => $e->target->{vg}, pg => 1;
+
+size $e->misc->{amount};
+
+if ($opt->{base}) {
+  die "can't find base file: $opt->{base}\n" unless -f $opt->{base};
+  do $opt->{base};
+}
+
+nic split ',', $opt->{nic} if $opt->{nic};
+fill split ',', $opt->{fill} if $opt->{fill};
+
+emitter $opt->{formatter} if $opt->{formatter};
+size $opt->{size} if $opt->{size};
+
+batch_generate;

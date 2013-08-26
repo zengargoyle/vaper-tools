@@ -1,0 +1,81 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+use FindBin;
+use lib "$FindBin::RealBin/../lib";
+use lib "$FindBin::RealBin/../local";
+
+use App::JuiceCalc::Simple;
+
+use feature 'switch';
+
+my @a = @ARGV;
+my %o;
+my %c = ( n => 1, f => 1, nic => 1, s => 1, r => 1, h => 1 );
+
+sub ok { ! exists $c{$a[0]} }
+
+unshift @a, 'h' unless @a;
+
+while (@a) {
+  for (shift @a) {
+    when ('n') {
+      ok or die "no recipe name given\n";
+      name shift @a
+    }
+    when ('f') {
+      my ($n,$p,@r);
+      ok or die "no flavor name given\n";
+      $n = shift @a;
+      ok or die "no flavor percentage given\n";
+      $p = shift @a; $p /= 100 if $p >= 1;
+      push @r, shift @a while @a and ok;
+      my %r = @r;
+      $r{$_} > 1 && ($r{$_} /= 100) for keys %r;
+      my @rr;
+      while (my ($x,$y) = splice @r,0,2) {
+        push @rr, $x, $r{$x};
+      }
+      flav $n, $p, @rr;
+    }
+    when ('nic') {
+      my ($mg,$mgml,@r);
+      ok or die "no nic mg given\n";
+      $mg = shift @a;
+      ok or die "no nic mgml given\n";
+      $mgml = shift @a;
+      push @r, shift @a while @a and ok;
+      my %r = @r;
+      $r{$_} > 1 && ($r{$_} /= 100) for keys %r;
+      my @rr;
+      while (my ($x,$y) = splice @r,0,2) {
+        push @rr, $x, $r{$x};
+      }
+      nic $mg, $mgml, @rr;
+    }
+    when ('s') {
+      ok or die "no size given\n";
+      size shift @a;
+    }
+    when ('r') {
+      ok or die "no ratio given\n";
+      my @r;
+      push @r, shift @a while @a and ok;
+      my %r = @r;
+      $r{$_} > 1 && ($r{$_} /= 100) for keys %r;
+      my @rr;
+      while (my ($x,$y) = splice @r,0,2) {
+        push @rr, $x, $r{$x};
+      }
+      #use Data::Dump; dd [ ar => \@r, hr => \%r, rr => \@rr ];
+      fill @rr;
+    }
+    default {
+    #when (/-{0,2}h(?:elp)?|\?/i) {
+      die "Usage: $0 n <name> f <name> <pct> <ratio>+ nic <mg> <mgml> <ratio>+ r <ratio>+ s <size>\n";
+    }
+  }
+}
+
+batch_generate;
