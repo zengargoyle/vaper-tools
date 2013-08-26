@@ -88,7 +88,7 @@ use File::Spec;
 sub BUILD {
   my $self = shift;
   my $share;
-  try {
+  try {  # ./lib/auto/App/JuiceCalc - doesn't count for Travis CI
     $share = File::ShareDir::dist_dir('App-JuiceCalc');
   };
   my $home = File::HomeDir->my_home;
