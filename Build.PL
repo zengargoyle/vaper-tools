@@ -22,6 +22,7 @@ my $build = Module::Build->new(
     'File::HomeDir' => '0',
     'File::ShareDir' => '0',
     'File::Slurp' => '0',
+    'MooX::Singleton' => '0',
   },
   build_requires => {
     'Test::More' => '0',
