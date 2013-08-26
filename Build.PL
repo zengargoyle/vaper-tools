@@ -20,7 +20,7 @@ my $build = Module::Build->new(
     'Module::List' => '0',
     'Try::Tiny' => '0',
     'File::HomeDir' => '0',
-    'File::ShareDire' => '0',
+    'File::ShareDir' => '0',
     'File::Slurp' => '0',
   },
   build_requires => {
