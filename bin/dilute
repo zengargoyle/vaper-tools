@@ -1,0 +1,76 @@
+#!/usr/bin/env perl
+use v5.10;
+use strict;
+use warnings;
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+dilute - quickly calculate Xmg to Ymg using Zmg dilutions
+
+=head1 VERSION
+
+version 0.01
+
+=cut
+
+use Getopt::Long::Descriptive;
+use Pod::Usage;
+my ( $opt, $usage ) = describe_options(
+  "%c %o StrOriginal StrFinal StrDilutant [VolOriginal:1]",
+  [],
+  [ 'help|h',    "print usage and exit" ],
+  [ 'man',       "print the manual page and exit" ],
+
+  #{ getopt_conf => [ 'bundling_override' ] }
+);
+print($usage->text), exit if $opt->{help};
+pod2usage( -verbose => 2, -noperldoc => 1 ) if $opt->{man};
+#use Data::Dump; dd [ opt => { %$opt } ];
+
+=head1 SYNOPSIS
+
+    dilute 30ml of 18mg juice to 12mg using 0mg
+
+    $ dilute 18 12 0 30
+    15 0.666666666666667
+
+    bump 10ml of 10mg juice to 16mg using 100mg base
+
+    $ dilute 10 16 100 10
+    0.714285714285714 0.933333333333333
+
+=head1 OPTIONS AND ARGUMENTS
+
+Takes in this order: strength_original strength_final strength_dilutant, and
+an optional volume_original (default: 1).
+
+Outputs the volume_dilutant needed and the ratio of original to final.
+
+    $ dilute 10 16 100 20
+    1.42857142857143 0.933333333333333
+
+To take 20ml of juice from 10mg/ml to 16mg/ml using a 100mg/ml dilutant;
+add 1.43ml of the 100mg/ml dilutant, the final solution will have 93% of the 'flavor' compared to the original undiluted 'flavor'.
+
+=cut
+
+# Strength (Original, Final, Dilutant)
+# Volume (Original, Dilutant)
+
+if (@ARGV < 3 or @ARGV > 4) {
+  print($usage->text);
+  exit 1;
+}
+
+my ($So, $Sf, $Sd, $Vo) = @ARGV;
+$Vo ||= 1;
+
+my $Vd = ($Vo*($Sf-$So)) / ($Sd-$Sf);
+
+die "Impossible Dilution\n" if $Vd < 0;
+say $Vd, ' ', $Vo/($Vo+$Vd);
+
