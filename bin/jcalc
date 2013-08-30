@@ -2,6 +2,8 @@
 use strict;
 use warnings;
 
+our $VERSION = '0.01';
+
 use FindBin;
 use lib "$FindBin::RealBin/../lib";
 use lib "$FindBin::RealBin/../local/lib/perl5";
@@ -10,33 +12,41 @@ use List::AllUtils qw( first );
 
 use App::JuiceCalc::Simple;
 
+=pod
+
+=encoding utf8
+
 =head1 NAME
 
+jcalc - a powerful juice calculator
+
 =head1 VERSION
+
+version 0.01
 
 =cut
 
 use Getopt::Long::Descriptive;
 use Pod::Usage;
 my ($opt, $usage) = describe_options(
-  "%c %o <some-arg>",
+  "%c %o",
   [ 'flavor|f=s', "the flavor file to mix" ],
   [ 'base|b=s',   "the base file to mix" ],
   [ 'nic=s',      "base override" ],
-  [ 'fill=s',       "fill override" ],
+  [ 'fill|r=s',       "fill override" ],
   [ 'size|s=i',   "the amount to mix" ],
-  [ 'formatter|fmt=s', "the formatter to use" ],
+  [ 'emitter|e=s', "the emitter to use" ],
   [],
-  [ 'list-formatters', "list the available formatters and exit" ],
+  [ 'list-emitters', "list the available emitters and exit" ],
   [ 'help|h',     "print usage and exit" ],
   [ 'man',        "print the manual page and exit" ],
   { getopt_conf => [ 'bundling_override' ] }
 );
 #use Data::Dump; dd [ opt => \%{ $opt } ];
 print($usage->text), exit if $opt->{help};
-pod2usage( -verbose => 2, -noperldoc => 1 ) if $opt->{man};
+pod2usage( -verbose => 2 ) if $opt->{man};
 
-if ($opt->{list_formatters}) {
+if ($opt->{list_emitters}) {
   my $info = list_emitters;
   for my $f (sort keys %$info) {
     print "\n";
@@ -50,7 +60,22 @@ if ($opt->{list_formatters}) {
 
 =head1 SYNOPSIS
 
-=head1 OPTIONS AND ARGUMENTS
+    jcalc [-bfhs] [long options...]
+      -f --flavor         the flavor file to mix
+      -b --base           the base file to mix
+      --nic               base override
+      -r --fill           fill override
+      -s --size           the amount to mix
+      -e --emitter        the emitter to use
+
+      --list-emitters     list the available emitters and exit
+      -h --help           print usage and exit
+      --man               print the manual page and exit
+
+    jcalc -f examples/fuzzy_custard.flav -b examples/juice_talk_13.base \
+      -s 10 --emit Default::default_table
+
+    jcalc -f examples/fuzzy_custard.flav
 
 =cut
 
@@ -74,3 +99,10 @@ emitter $opt->{formatter} if $opt->{formatter};
 size $opt->{size} if $opt->{size};
 
 batch_generate;
+
+__END__
+
+=head1 OPTIONS AND ARGUMENTS
+
+=cut
+

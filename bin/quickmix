@@ -2,17 +2,20 @@
 use strict;
 use warnings;
 
+our $VERSION = '0.01';
+
 use FindBin;
 use lib "$FindBin::RealBin/../lib";
 use lib "$FindBin::RealBin/../local/lib/perl5";
 
 use App::JuiceCalc::Simple;
 
+use Pod::Usage;
+
 use feature 'switch';
 
 my @a = @ARGV;
-my %o;
-my %c = ( n => 1, f => 1, nic => 1, s => 1, r => 1, h => 1 );
+my %c = ( n => 1, f => 1, nic => 1, s => 1, r => 1, e => 1 );
 
 sub ok { ! exists $c{$a[0]} }
 
@@ -71,11 +74,108 @@ while (@a) {
       #use Data::Dump; dd [ ar => \@r, hr => \%r, rr => \@rr ];
       fill @rr;
     }
+    when ('e') {
+      ok or die "no emitter given\n";
+      emitter shift @a;
+    }
+    when ('--man') {
+      pod2usage( -verbose => 2 );
+    }
+    when (/--?h.*/) {
+      pod2usage(message => 'See: --man for more info');
+    }
     default {
-    #when (/-{0,2}h(?:elp)?|\?/i) {
-      die "Usage: $0 n <name> f <name> <pct> <ratio>+ nic <mg> <mgml> <ratio>+ r <ratio>+ s <size>\n";
+      die "Usage: $0 [--help|--man] n <name> f <name> <pct> <ratio>+ nic <mg> <mgml> <ratio>+ r <ratio>+ s <size> e <emitter>\n";
     }
   }
 }
 
 batch_generate;
+
+__END__
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+quickmix - quick juice calculator
+
+=head1 VERSION
+
+version 0.01
+
+=head1 SYNOPSIS
+
+    quickmix n 'juice name' f 'flavor 1 (VND)' 10 \
+      f 'flavor 2 (VND)' 4 nic 12 100 pg 50 vg 50 \
+      r vg 30 pg 100 s 10 e Default::default_table
+
+    .-----------------------------------------------.
+    |       juice name 12 mg/ml (70/30 PG/VG)       |
+    +--------------------------------+------+-------+
+    | Flavor                         |   ml | Total |
+    +--------------------------------+------+-------+
+    | PG                             | 5.00 |  5.00 |
+    +--------------------------------+------+-------+
+    | VG                             | 2.40 |  7.40 |
+    +--------------------------------+------+-------+
+    | 100 mg/ml Nicotine 50/50 PG/VG | 1.20 |  8.60 |
+    +--------------------------------+------+-------+
+    | flavor 1 (VND) PG              | 1.00 |  9.60 |
+    +--------------------------------+------+-------+
+    | flavor 2 (VND) PG              | 0.40 | 10.00 |
+    '--------------------------------+------+-------'
+
+=head1 OPTIONS AND ARGUMENTS
+
+Most things have reasonable defaults (See: L<App::JuiceCalc/Defaults>).
+
+Percentage values may be given as numbers > 1 or numbers <= 1.  Internally
+all percentages are handled as fractions (e.g.: 10% = 0.10) so for
+convenience any number > 1 is divided by 100 automatically.  This also
+means that to enter 1% you must use 0.01 as a singe 1 is considered as
+1.0 (i.e: 100%).
+
+    quickmix f purple 10
+
+    .---------------------------------------.
+    | Unknown Flavor 18 mg/ml (70/30 PG/VG) |
+    +------------------------+------+-------+
+    | Flavor                 |   ml | Total |
+    +------------------------+------+-------+
+    | PG                     | 4.20 |  4.20 |
+    +------------------------+------+-------+
+    | VG                     | 3.00 |  7.20 |
+    +------------------------+------+-------+
+    | 100 mg/ml Nicotine PG  | 1.80 |  9.00 |
+    +------------------------+------+-------+
+    | purple PG              | 1.00 | 10.00 |
+    '------------------------+------+-------'
+
+=over
+
+=item * n 'Recipe Name'
+
+=item * f 'Flavor Name' percentage [ pg percentage vg percentage ]
+
+=item * nic desired_mg base_mg [ pg percentage vg percentage ]
+
+=item * r vg percentage pg percentage
+
+When filling a mix, an attempt is made to meet the percentages in the
+order given.  So to make a 30/70 VG/PG mix specify C<r vg 30 pg 100> which
+will first try to make the VG content reach 30%, then will fill the rest
+of the mix with PG.
+
+=item * s size
+
+=item * e emitter_spec
+
+See: L<App::JuiceCalc/Emitters>
+
+=back
+
+=cut
+

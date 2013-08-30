@@ -2,6 +2,8 @@
 use strict;
 use warnings;
 
+our $VERSION = '0.01';
+
 use FindBin;
 use lib "$FindBin::RealBin/../lib";
 use lib "$FindBin::RealBin/../local/lib/perl5";
@@ -10,25 +12,41 @@ use App::JuiceCalc::Simple;
 use App::JuiceCalc::EJMUParser;
 use List::AllUtils qw( first );
 
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+ejmu - read a recipe from an 'eJuice Me Up' .rec file, then act like L<jcalc>
+
+=head1 VERSION
+
+version 0.01
+
+=cut
+
 use Getopt::Long::Descriptive;
 use Pod::Usage;
 my ($opt, $usage) = describe_options(
-  "%c %o <some-arg>",
-  [ 'flavor|f=s', "the EJMU flavor recipe file to mix", { default => 'default.rec' } ],
+  "%c %o",
+  [ 'name|n=s',   "the flavor name (default: guessed from filename)" ],
+  [ 'flavor|f=s', "the EJMU flavor recipe file to mix" ],
   [ 'base|b=s',   "the base file to mix" ],
   [ 'nic=s',      "base override" ],
-  [ 'fill=s',       "fill override" ],
+  [ 'fill|r=s',       "fill override" ],
   [ 'size|s=i',   "the amount to mix" ],
-  [ 'formatter|fmt=s', "the formatter to use", { default => 'Default::default_table' } ],
+  [ 'emitter|e=s', "the emitter to use" ],
   [],
-  [ 'list-formatters', "list the available formatters and exit" ],
+  [ 'nosanitize', "don't try and cleanup the recipe" ],
+  [ 'list-emitters', "list the available emitters and exit" ],
   [ 'help|h',     "print usage and exit" ],
   [ 'man',        "print the manual page and exit" ],
   { getopt_conf => [ 'bundling_override' ] }
 );
 #use Data::Dump; dd [ opt => \%{ $opt } ];
 print($usage->text), exit if $opt->{help};
-pod2usage( -verbose => 2, -noperldoc => 1 ) if $opt->{man};
+pod2usage( -verbose => 2 ) if $opt->{man};
 
 if ($opt->{list_formatters}) {
   my $info = list_emitters;
@@ -44,7 +62,43 @@ if ($opt->{list_formatters}) {
 
 =head1 SYNOPSIS
 
+    ejmu [-bfhs] [long options...]
+      -n --name           the flavor name (default: guessed from filename)
+      -f --flavor         the EJMU flavor recipe file to mix
+      -b --base           the base file to mix
+      --nic               base override
+      -r --fill           fill override
+      -s --size           the amount to mix
+      -e --emitter        the emitter to use
+
+      --nosanitize        don't try and cleanup the recipe
+      --list-emitters     list the available emitters and exit
+      -h --help           print usage and exit
+      --man               print the manual page and exit
+
+    ejmu -f 'examples/Fuzzy Custard.rec' --size 10
+
+    .-----------------------------------------------.
+    |      Fuzzy Custard 13 mg/ml (70/30 PG/VG)     |
+    +--------------------------------+------+-------+
+    | Flavor                         |   ml | Total |
+    +--------------------------------+------+-------+
+    | PG                             | 4.65 |  4.65 |
+    +--------------------------------+------+-------+
+    | VG                             | 2.35 |  7.00 |
+    +--------------------------------+------+-------+
+    | 100 mg/ml Nicotine 50/50 PG/VG | 1.30 |  8.30 |
+    +--------------------------------+------+-------+
+    | Vanilla Custard (TFA) PG       | 1.30 |  9.60 |
+    +--------------------------------+------+-------+
+    | Juicy Peach (TFA) PG           | 0.30 |  9.90 |
+    +--------------------------------+------+-------+
+    | Butterscotch (TFA) PG          | 0.10 | 10.00 |
+    '--------------------------------+------+-------'
+
 =head1 OPTIONS AND ARGUMENTS
+
+See: L<jcalc>
 
 =cut
 
@@ -57,8 +111,9 @@ else {
 
 my $e = App::JuiceCalc::EJMUParser->new_from_file(
   file => $opt->{flavor},
-  autoname => 1,
-)->sanitize;
+  ($opt->{name} ? ( name => $opt->{name} ) : ( autoname => 1 )),
+);
+$e = $e->sanitize unless $opt->{nosanitize};
 
 name $e->name;
 my $f = $e->flavors;
@@ -81,7 +136,9 @@ if ($opt->{base}) {
 nic split ',', $opt->{nic} if $opt->{nic};
 fill split ',', $opt->{fill} if $opt->{fill};
 
-emitter $opt->{formatter} if $opt->{formatter};
+emitter $opt->{emitter} if $opt->{emitter};
 size $opt->{size} if $opt->{size};
 
 batch_generate;
+
+__END__

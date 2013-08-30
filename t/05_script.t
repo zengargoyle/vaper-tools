@@ -49,7 +49,7 @@ is $out, $output, 'ejmu';
 
 my $ejmu = read_file 't/test_data/Fuzzy Custard.rec';
 ($out, $err, $rc) = capture {
-  system(q[./bin/ejmu -f 't/test_data/Fuzzy Custard.rec' --fmt=Default::default_ejmu]);
+  system(q[./bin/ejmu -f 't/test_data/Fuzzy Custard.rec' --emitter=Default::default_ejmu]);
 };
 is $out, $ejmu, 'ejmu round trip';
 
