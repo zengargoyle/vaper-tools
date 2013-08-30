@@ -14,71 +14,10 @@ Sweet Cream - TFA Sweetener - EcigExpress
 
 http://www.reddit.com/r/DIY_eJuice/comments/1lb59h/licoriceftw_my_new_diy_and_its_soooo_good/
 
-size 30;
-nic 12, 36, pg => 1; # 10ml
-flav 'NIC' => 10; # ml
-flav 'PG' => 5; # ml
-flav 'VG' => 9; # ml
-flav 'Licorice (LA)' => 4.11; # ml
-flav 'Wintergreen (LA)' => 0.95; # ml
-flav 'Sweet Cream (TFA)' => 0.63; # ml
-flav 'Sweetener' => 0.32; #ml
-# 10+5+9+4.11+0.95+0.63+0.32 = 30.01
-
-
-name 'Licorice (jmsneptuneonfire)';
-flav 'Licorice (LA)' => 4.11/30; # ml
-flav 'Wintergreen (LA)' => 0.95/30; # ml
-flav 'Sweet Cream (TFA)' => 0.63/30; # ml
-flav 'Sweetener' => 0.32/30; #ml
-nic 12, 36;
-fill vg => 9/30, pg => 1;
-size 1;
-
 =cut
 
-{ my @amt;
+name 'Licorice (jmsneptuneonfire)';
 
-use List::AllUtils qw( sum );
-use Data::Dump qw( pp );
-
-sub amt_reset { @amt = () }
-sub amt {
-  if (@_) {
-    push @amt, [ @_ ];
-  }
-}
-sub amt_generate {
-  #print STDERR pp(\@amt);
-
-  my $s = sum map $_->[1], @amt;
-  $_->[1] /= $s for @amt;
-
-  my %fr = ( pg => 1, vg => 0 );
-
-  for my $f ( @amt ) {
-    if ($f->[0] =~ /^nic(:?otine)?$/i) {
-      my (undef, $pc, %rest) = @{ $f };
-      my $nic = delete $rest{mg} // 0;
-      my $mg = $nic * $pc;
-      nic($mg, $nic, %rest);
-      next;
-    }
-    if ($f->[0] =~ /^(pg|vg)$/i) {
-      $fr{ uc($1) } = $f->[1];
-      next;
-    }
-    my (undef, $pc, %rest) = @{ $f };
-    %rest = ( pg => 1, %rest );
-    $fr{$_} += $pc * $rest{$_} for keys %rest;
-    flav(@{ $f });
-  }
-  #print STDERR pp([fr=>\%fr]);
-  fill(vg => $fr{vg} + $fr{VG}, pg => 1);
-}
-}
-
-amt_reset;
 amt 'NIC' => 10, mg => 36;
 amt 'PG' => 5;
 amt 'VG' => 9;
@@ -86,6 +25,7 @@ amt 'Licorice (LA)' => 4.11;
 amt 'Wintergreen (LA)' => 0.95;
 amt 'Sweet Cream (TFA)' => 0.63;
 amt 'Sweetener' => 0.32;
+
 amt_generate;
 
-emitter 'Default::default_unit';
+#emitter 'Default::default_unit';
