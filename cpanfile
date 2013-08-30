@@ -15,6 +15,7 @@ requires 'Text::ASCIITable';
 requires 'Try::Tiny';
 requires 'perl', 'v5.10.1';
 requires 'utf8::all';
+requires 'Number::Format';
 
 on build => sub {
     requires 'Capture::Tiny';

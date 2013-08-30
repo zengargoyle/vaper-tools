@@ -38,16 +38,18 @@ size 1;
 =cut
 
 { my @amt;
+
 use List::AllUtils qw( sum );
 use Data::Dump qw( pp );
 
+sub amt_reset { @amt = () }
 sub amt {
   if (@_) {
     push @amt, [ @_ ];
-    return;
   }
-
-  print STDERR pp(\@amt);
+}
+sub amt_generate {
+  #print STDERR pp(\@amt);
 
   my $s = sum map $_->[1], @amt;
   $_->[1] /= $s for @amt;
@@ -71,11 +73,12 @@ sub amt {
     $fr{$_} += $pc * $rest{$_} for keys %rest;
     flav(@{ $f });
   }
-  print STDERR pp([fr=>\%fr]);
+  #print STDERR pp([fr=>\%fr]);
   fill(vg => $fr{vg} + $fr{VG}, pg => 1);
 }
 }
 
+amt_reset;
 amt 'NIC' => 10, mg => 36;
 amt 'PG' => 5;
 amt 'VG' => 9;
@@ -83,8 +86,6 @@ amt 'Licorice (LA)' => 4.11;
 amt 'Wintergreen (LA)' => 0.95;
 amt 'Sweet Cream (TFA)' => 0.63;
 amt 'Sweetener' => 0.32;
-amt;
-
-size 1;
+amt_generate;
 
 emitter 'Default::default_unit';

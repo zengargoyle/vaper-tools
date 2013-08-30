@@ -98,6 +98,7 @@ _
   },
 );
 
+use Number::Format qw( :subs );
 sub default_unit {
   my %args = @_;
   my $batch = delete $args{batch} // die "no batch\n";
@@ -109,24 +110,24 @@ sub default_unit {
     printf qq{flav '%s' => %0.2f, %s;\n},
       $f->[0]->as_string(with_ratio=>0),
       $f->[1],
-      join(', ', map { sprintf "$_ => %0.2f", $n{$_} } sort keys %n);
+      join(', ', map { sprintf "$_ => %s", round($n{$_},2) } sort keys %n);
   }
   {
     my %n = %{ $mix->base->carrier->normal };
-    printf qq{nic %0.2f, %0.2f, %s;\n},
-      $mix->mg, $mix->base->mg,
-      join(', ', map { sprintf "$_ => %0.2f", $n{$_} } sort keys %n);
+    printf qq{nic %s, %s, %s;\n},
+      round($mix->mg,2), round($mix->base->mg,2),
+      join(', ', map { sprintf "$_ => %s", round($n{$_},2) } sort keys %n);
   }
   {
     use List::AllUtils qw( natatime );
     my $it = natatime 2, @{ $mix->ratio };
     my @n;
     while (my ($k, $v) = $it->()) {
-      push @n, sprintf "$k => %0.2f", $v;
+      push @n, sprintf "$k => %s", round($v,2);
     }
     printf qq{fill %s;\n}, join ', ', @n;
   }
-  printf qq{size %0.2f;\n}, $batch->size;
+  printf qq{size %s;\n}, round($batch->size,2);
 
 }
 
