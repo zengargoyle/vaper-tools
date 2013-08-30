@@ -74,7 +74,61 @@ Looks something like:
 _
 
   },
+  default_unit => {
+    summary => 'Dump back out as a App::JuiceCalc recipe',
+    description => <<'_',
+
+This dumps the batch as a sequence of lines that can be used to recreate
+the batch.  That is... it does *nothing*.  This is mostly useful for
+converting wildly different input to a standard format.
+
+Looks something like:
+
+name 'Unknown Flavor';
+flav 'Licorice (LA)' => 0.14, pg => 1.00;
+flav 'Wintergreen (LA)' => 0.03, pg => 1.00;
+flav 'Sweet Cream (TFA)' => 0.02, pg => 1.00;
+flav 'Sweetener' => 0.01, pg => 1.00;
+nic 12.00, 36.00, pg => 1.00;
+fill vg => 0.30, pg => 1.00;
+size 1.00;
+
+_
+
+  },
 );
+
+sub default_unit {
+  my %args = @_;
+  my $batch = delete $args{batch} // die "no batch\n";
+  my $mix = $batch->mix;
+  my $fl = $batch->mix->flavor;
+  printf qq{name '%s';\n}, $fl->name;
+  for my $f ( @{ $fl->flavors_scaled } ) {
+    my %n = %{ $f->[0]->carrier->normal };
+    printf qq{flav '%s' => %0.2f, %s;\n},
+      $f->[0]->as_string(with_ratio=>0),
+      $f->[1],
+      join(', ', map { sprintf "$_ => %0.2f", $n{$_} } sort keys %n);
+  }
+  {
+    my %n = %{ $mix->base->carrier->normal };
+    printf qq{nic %0.2f, %0.2f, %s;\n},
+      $mix->mg, $mix->base->mg,
+      join(', ', map { sprintf "$_ => %0.2f", $n{$_} } sort keys %n);
+  }
+  {
+    use List::AllUtils qw( natatime );
+    my $it = natatime 2, @{ $mix->ratio };
+    my @n;
+    while (my ($k, $v) = $it->()) {
+      push @n, sprintf "$k => %0.2f", $v;
+    }
+    printf qq{fill %s;\n}, join ', ', @n;
+  }
+  printf qq{size %0.2f;\n}, $batch->size;
+
+}
 
 sub default_ejmu {
   my %args = @_;
