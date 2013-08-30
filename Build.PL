@@ -23,6 +23,7 @@ my $build = Module::Build->new(
     'File::ShareDir' => '0',
     'File::Slurp' => '0',
     'MooX::Singleton' => '0',
+    'Number::Format' => '0',
   },
   build_requires => {
     'Test::More' => '0',
