@@ -95,7 +95,7 @@ if ($opt->{base}) {
 nic split ',', $opt->{nic} if $opt->{nic};
 fill split ',', $opt->{fill} if $opt->{fill};
 
-emitter $opt->{formatter} if $opt->{formatter};
+emitter $opt->{emitter} if $opt->{emitter};
 size $opt->{size} if $opt->{size};
 
 batch_generate;
