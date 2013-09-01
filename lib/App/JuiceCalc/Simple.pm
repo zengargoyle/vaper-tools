@@ -88,6 +88,8 @@ use App::JuiceCalc;
       if ($f->[0] =~ /^nic(:?otine)?$/i) {
         my (undef, $pc, %rest) = @{ $f };
         my $nic = delete $rest{mg} // 0;
+        %rest = ( pg => 1, %rest );
+        $fr{$_} += $pc * $rest{$_} for keys %rest;
         my $mg = $nic * $pc;
         nic($mg, $nic, %rest);
         next;

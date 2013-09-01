@@ -215,5 +215,40 @@ is_deeply decode_json($out),
 }, 'DW fill';
 ok !$err, 'no error messages';
 
+( $out, $err, $rc ) = do_mix(
+  sub {
+    amt 'foo' => 10;
+    amt 'bat' =>  5;
+    amt 'nic' => 20, pg => .5, vg => .5, mg => 100;
+    amt 'VG' =>  30;
+    amt 'PG' =>  35;
+    amt_generate;
+  }
+);
+
+# the amt_generate() caclulations yield long fractions,
+# round them for testing ease.
+
+use Number::Format qw( round );
+
+my $info = decode_json($out);
+for (@{ $info->{flavors} }) {
+  $_->{volume} = round($_->{volume}, 2);
+}
+
+is_deeply $info,
+{
+  title => 'Unknown Flavor 20 mg/ml (60/40 PG/VG)',
+  flavors => [
+    { name => 'PG', volume => .35, },
+    { name => 'VG', volume => .30, },
+    { name => '100 mg/ml Nicotine 50/50 PG/VG', volume => .2, },
+    { name => 'foo PG', volume => .1 },
+    { name => 'bat PG', volume => .05 },
+  ],
+}, 'caclucate via amt()';
+
+ok !$err, 'no error messages';
+
 pass;
 done_testing;
