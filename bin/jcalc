@@ -31,7 +31,9 @@ use Pod::Usage;
 my ($opt, $usage) = describe_options(
   "%c %o",
   [ 'flavor|f=s', "the flavor file to mix" ],
-  [ 'base|b=s',   "the base file to mix" ],
+  [ 'base_file|bf=s',   "the base file to mix" ],
+  [ 'base|b=s',   "base override" ],
+  [ 'mg|m=s',     "final mg/ml desired" ],
   [ 'nic=s',      "base override" ],
   [ 'fill|r=s',       "fill override" ],
   [ 'size|s=i',   "the amount to mix" ],
@@ -60,9 +62,11 @@ if ($opt->{list_emitters}) {
 
 =head1 SYNOPSIS
 
-    jcalc [-bfhs] [long options...]
+    jcalc [-befhmrs] [long options...]
       -f --flavor         the flavor file to mix
-      -b --base           the base file to mix
+      --bf --base_file    the base file to mix
+      -b --base           base override
+      -m --mg             final mg/ml desired
       --nic               base override
       -r --fill           fill override
       -s --size           the amount to mix
@@ -87,11 +91,13 @@ else {
   die "No flavor file given\n";
 }
 
-if ($opt->{base}) {
-  die "Can't find base file: $opt->{base}\n" unless -f $opt->{base};
-  do $opt->{base};
+if ($opt->{base_file}) {
+  die "Can't find base file: $opt->{base_file}\n" unless -f $opt->{base_file};
+  do $opt->{base_file};
 }
 
+base split ',', $opt->{base} if $opt->{base};
+mg $opt->{mg} if $opt->{mg};
 nic split ',', $opt->{nic} if $opt->{nic};
 fill split ',', $opt->{fill} if $opt->{fill};
 

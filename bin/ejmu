@@ -32,8 +32,10 @@ my ($opt, $usage) = describe_options(
   "%c %o",
   [ 'name|n=s',   "the flavor name (default: guessed from filename)" ],
   [ 'flavor|f=s', "the EJMU flavor recipe file to mix" ],
-  [ 'base|b=s',   "the base file to mix" ],
-  [ 'nic=s',      "base override" ],
+  [ 'base_file|bf=s',   "the base file to mix" ],
+  [ 'base|b=s',   "base override" ],
+  [ 'mg|m=s',     "final mg/ml desired" ],
+  [ 'nic=s',      "(deprecated) base override" ],
   [ 'fill|r=s',       "fill override" ],
   [ 'size|s=i',   "the amount to mix" ],
   [ 'emitter|e=s', "the emitter to use" ],
@@ -62,11 +64,13 @@ if ($opt->{list_formatters}) {
 
 =head1 SYNOPSIS
 
-    ejmu [-bfhs] [long options...]
+    ejmu [-befhmnrs] [long options...]
       -n --name           the flavor name (default: guessed from filename)
       -f --flavor         the EJMU flavor recipe file to mix
-      -b --base           the base file to mix
-      --nic               base override
+      --bf --base_file    the base file to mix
+      -b --base           base override
+      -m --mg             final mg/ml desired
+      --nic               (deprecated) base override
       -r --fill           fill override
       -s --size           the amount to mix
       -e --emitter        the emitter to use
@@ -128,11 +132,13 @@ fill vg => $e->target->{vg}, pg => 1;
 
 size $e->misc->{amount};
 
-if ($opt->{base}) {
-  die "can't find base file: $opt->{base}\n" unless -f $opt->{base};
-  do $opt->{base};
+if ($opt->{base_file}) {
+  die "can't find base file: $opt->{base_file}\n" unless -f $opt->{base_file};
+  do $opt->{base_file};
 }
 
+base split ',', $opt->{base} if $opt->{base};
+mg $opt->{mg} if $opt->{mg};
 nic split ',', $opt->{nic} if $opt->{nic};
 fill split ',', $opt->{fill} if $opt->{fill};
 

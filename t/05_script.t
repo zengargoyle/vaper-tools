@@ -38,7 +38,7 @@ is $out, $output, 'quickmix';
 is $out, $output, 'quickmix fractional';
 
 ($out, $err, $rc) = capture {
-  system(q[./bin/jcalc -f t/test_data/fuzzy_custard.flav -b t/test_data/juice_talk_13.base]);
+  system(q[./bin/jcalc -f t/test_data/fuzzy_custard.flav -bf t/test_data/juice_talk_13.base]);
 };
 is $out, $output, 'jcalc';
 

@@ -15,7 +15,7 @@ use Pod::Usage;
 use feature 'switch';
 
 my @a = @ARGV;
-my %c = ( n => 1, f => 1, nic => 1, s => 1, r => 1, e => 1 );
+my %c = ( n => 1, f => 1, nic => 1, b => 1, m => 1, bf => 1, s => 1, r => 1, e => 1 );
 
 sub ok { ! exists $c{$a[0]} }
 
@@ -41,6 +41,31 @@ while (@a) {
         push @rr, $x, $r{$x};
       }
       flav $n, $p, @rr;
+    }
+    when ('bf') {
+      ok or die "no base_file given\n";
+      my $bf = shift @a;
+      -f $bf or die "Can't find base_file: $bf\n";
+      do $bf;
+    }
+    when ('b') {
+      my ($mgml,@r);
+      ok or die "no nic mg/ml given\n";
+      $mgml = shift @a;
+      push @r, shift @a while @a and ok;
+      my %r = @r;
+      $r{$_} > 1 && ($r{$_} /= 100) for keys %r;
+      my @rr;
+      while (my ($x,$y) = splice @r,0,2) {
+        push @rr, $x, $r{$x};
+      }
+      base $mgml, @rr;
+    }
+    when ('m') {
+      my ($mg,$mgml,@r);
+      ok or die "no mg given\n";
+      $mg = shift @a;
+      mg $mg;
     }
     when ('nic') {
       my ($mg,$mgml,@r);
@@ -85,7 +110,7 @@ while (@a) {
       pod2usage(message => 'See: --man for more info');
     }
     default {
-      die "Usage: $0 [--help|--man] n <name> f <name> <pct> <ratio>+ nic <mg> <mgml> <ratio>+ r <ratio>+ s <size> e <emitter>\n";
+      die "Usage: $0 [--help|--man] n <name> f <name> <pct> <ratio>+ m <mg> b <mgml> <ratio>+ r <ratio>+ s <size> e <emitter>\n";
     }
   }
 }
@@ -109,7 +134,7 @@ version 0.01
 =head1 SYNOPSIS
 
     quickmix n 'juice name' f 'flavor 1 (VND)' 10 \
-      f 'flavor 2 (VND)' 4 nic 12 100 pg 50 vg 50 \
+      f 'flavor 2 (VND)' 4 m 12 b 100 pg 50 vg 50 \
       r vg 30 pg 100 s 10 e Default::default_table
 
     .-----------------------------------------------.
@@ -160,7 +185,21 @@ means that to enter 1% you must use 0.01 as a singe 1 is considered as
 
 =item * f 'Flavor Name' percentage [ pg percentage vg percentage ]
 
+=item * bf /path/to/base.file
+
+Load settings from a base_file.
+
+=item * m desired_mg
+
+The final mg/ml of nicotine desired.
+
+=item * b base_mg [ pg percentage vg percentage ]
+
+The nicotine I<base> to use for this batch.
+
 =item * nic desired_mg base_mg [ pg percentage vg percentage ]
+
+Old form of B<m> X B<b> X pg Y vg Z (deprecated)
 
 =item * r vg percentage pg percentage
 
