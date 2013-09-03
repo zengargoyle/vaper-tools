@@ -247,7 +247,28 @@ is_deeply $info,
     { name => 'bat PG', volume => .05 },
   ],
 }, 'caclucate via amt()';
+ok !$err, 'no error messages';
 
+
+( $out, $err, $rc ) = do_mix(
+  sub {
+      flav 'f1', .1;
+      base 100, pg => 1;
+      mg 20;
+      fill vg => .30, pg => 1;
+  }
+);
+
+is_deeply decode_json($out),
+{
+  title => 'Unknown Flavor 20 mg/ml (70/30 PG/VG)',
+  flavors => [
+    { name => 'PG', volume => .4, },
+    { name => 'VG', volume => .3, },
+    { name => '100 mg/ml Nicotine PG', volume => .2, },
+    { name => 'f1 PG', volume => .1 },
+  ],
+}, 'use base and mg instead of nic';
 ok !$err, 'no error messages';
 
 pass;

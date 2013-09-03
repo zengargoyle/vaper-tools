@@ -44,12 +44,19 @@ has base => (
 
 has base_mg => (
   is => 'rw',
-  default => sub { 100 },
+  lazy => 1,
+  default => sub { (split /\s*,\s*/, $_[0]->base)[0] || 100 },
 );
 
 has base_carrier => (
   is => 'rw',
-  default => sub { 'pg,1' },
+  lazy => 1,
+  default => sub {
+    my @base = split /\s*,\s*/, $_[0]->base;
+    shift @base;
+    my $n = join ',', 'pg,1', @base;
+    $n;
+  },
   coerce => \&_coerce_split_hash,
 );
 

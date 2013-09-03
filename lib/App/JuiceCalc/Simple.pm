@@ -8,6 +8,8 @@ our @EXPORT = qw(
   name
   flav
   nic
+  base
+  mg
   fill
   emitter
   list_emitters
@@ -42,15 +44,25 @@ use App::JuiceCalc;
 
   sub flav { $fb->add_flavor( @_ ) }
 
-  sub nic {
-    my ($mg, $mgml, @con) = @_;
+  sub base {
+    my ($mgml, @con) = @_;
     my $f = Nicotine->new(
       mg => $mgml,
       # default PG if no carrier given
       carrier => { (pg => 1)x!@con, @con},
     );
     $mix->base( $f );
+  }
+
+  sub mg {
+    my ($mg) = @_;
     $mix->mg( $mg );
+  }
+
+  sub nic {
+    my ($mg, $mgml, @con) = @_;
+    base($mgml, @con);
+    mg($mg);
   }
 
   sub fill { $mix->ratio([ @_ ]) }
