@@ -22,11 +22,17 @@ sub extra_template {
   my $batch = delete $args{batch} // die "no batch\n";
   my $emitter_args = delete $args{emitter_args} // {};
   my $template = delete $emitter_args->{template} // die "no template\n";
-  #my $out_fh = delete $emitter_args->{out_fh} // \*STDOUT;
+  my $ejmu = delete $emitter_args->{ejmu} // '';
   my $out_fh;
 
   if (my $filename = delete $emitter_args->{outfile}) {
     open $out_fh, '>', $filename or die "bad outfile: $!\n";
+    if ($ejmu == 1) {
+      $ejmu = $filename;
+      $ejmu =~ s/\.html$//;
+      $ejmu .= '.rec';
+      $ejmu = qq{<p>Want an eJuice Me Up <a href="$ejmu">recipe file</a>?</p>};
+    }
   }
   else {
     $out_fh = delete $emitter_args->{out_fh} // \*STDOUT;
@@ -51,6 +57,7 @@ sub extra_template {
       name => $title,
       table => $batch->mix->generate->{mix},
       amount => $batch->size,
+      ejmu => $ejmu,
     }
   ) or croak "Problem processing $template $Text::Template::ERROR\n";
 
