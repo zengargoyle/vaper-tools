@@ -1,6 +1,0 @@
-name 'Chunkachino';
-flav 'Cappuchino' => .05;
-flav 'Sweet Cream' => .03;
-flav 'Moca' => .02;
-flav 'Caramel' => .05;
-flav 'Chocolate Double Clear' => .05;

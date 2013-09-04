@@ -1,0 +1,44 @@
+
+#
+# Juice Talk Week 2 2013-06-26
+#
+# Note: the Orange is an essential oil, will fog plastic
+# tanks.
+#
+# Note: the numbers on this mix are all fucked up...  best to
+# ignore them.  i think he got mixed up about half way through and
+# did half the mix for a 30ml total and half the mix for a 32ml total
+# or some such crazy.  just take the word that it was supposed to
+# be 10,8,2 % for a total of 20% and ignore the actual mixing in
+# the show.
+#
+
+name 'Chocolate Orange';
+
+flav 'Double Chocolate (TFA)' => .1;
+flav 'Orange Oil (LAN)' => .08;
+flav 'Spearmint (TFA)' => .02;
+
+# 70/30 PG/VG
+fill vg => .3, pg => 1;
+
+# pre-standardized batch
+base 100, pg => .5, vg => .5;
+mg 14;
+size 32;
+
+=for comment
+
+OMG these numbers are all over the place and pretty much crap!
+
+amt pg => 11.52;
+amt vg => 7.68;  # 19.2
+amt nic => 3.84, mg => 100, pg => .5, vg => .5; # 23.04 == 23
+amt 'Orange (LAN)' => 2.56; # 25.6  # 2.53 WTF? 25.6
+amt 'Double Chocolate (TFA)' => 3.2 ; # says 31.68  # calcs 6.08 says 11.52 WTF?  now 3.2  28.8 total vol nowhere near 32
+amt 'Spearmint (TFA)' => .32 ; # 32 # says .5 WTF?
+amt_generate;
+size 32;
+
+=cut
+

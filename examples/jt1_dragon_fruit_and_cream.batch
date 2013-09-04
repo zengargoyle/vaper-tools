@@ -1,0 +1,23 @@
+
+#
+# Juice Talk Week 1 2013-06-19
+#
+# Note: he actually made DF 12%, SC 6% when he
+# added DF to 9.4 at 43:40-ish
+#
+# creams need steeping
+#
+
+name 'Dragon Fruit and Cream';
+
+flav 'Dragon Fruit (TFA)' => .13;
+flav 'Sweet Cream (TFA)' => .05;
+
+# 70/30 PG/VG
+fill vg => .3, pg => 1;
+
+# pre-standardized batch
+base 100, pg => .5, vg => .5;
+mg 14;
+size 10;
+

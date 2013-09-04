@@ -1,0 +1,19 @@
+
+#
+# Juice Talk Week 10 2013-08-30
+#
+# Note: maybe a couple drops menthol or koolada or mint candy!
+#
+
+name 'White Typhoon';
+
+flav 'White Chocolate (TFA)' => .08;
+flav 'Mango (TFA)' => .07;
+flav 'Juicy Peach (TFA)' => .05;
+flav 'Koolada (TFA)' => .0025;  # 1 drop(40/ml) per 10ml == (1/40)/10 == .0025
+flav 'Mint Candy (TFA)' => .005;  # 2 drop(40/ml) / 10ml == (2/40)/10 == .005
+
+fill vg => .3, pg => 1;
+base 100, pg => .5, vg => .5;
+mg 13;
+size 32;

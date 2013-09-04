@@ -1,0 +1,16 @@
+
+#
+# Juice Talk Week 6 2013-07-24
+#
+
+name 'Island Cherry';
+
+flav 'Cherry (LA)' => .08;
+flav 'Double Chocolate Clear (TFA)' => .05; # needs a bit more like 4-5 drops
+flav 'Coconut (TFA)' => .03;
+flav 'Sweetener (TFA)' => .04;
+
+fill vg => .3, pg => 1;
+base 100, pg => .5, vg => .5;
+mg 13;
+size 32;

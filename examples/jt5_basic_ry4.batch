@@ -1,0 +1,18 @@
+
+#
+# Juice Talk Week 5 2013-07-17
+#
+# Note: Butterscotch might be good
+#
+
+name 'Basic RY4';
+
+flav 'Tobacco Absolute (TFA)' => .02;
+flav 'Vanilla (TFA)' => .08;
+flav 'Caramel (TFA)' => .08;
+flav 'Brown Sugar (TFA)' => .01;
+
+fill vg => .3, pg => 1;
+base 100, pg => .5, vg => .5;
+mg 13;
+size 32;

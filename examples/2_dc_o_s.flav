@@ -1,6 +1,0 @@
-
-name 'Unknown';
-flav 'Double Chocolate (TFA)' => .1;
-flav 'Orange (TFA)' => .08;
-flav 'Spearmint (TFA)' => .02;
-note 'maybe a bit messed up';

@@ -1,0 +1,18 @@
+
+#
+# Juice Talk Week 9.1 Flash Show 2013-08-24
+#
+# Note: needs steeping; warning EM is 20%, not the normal
+# 10%... may need to double to .02 if using standard EM.
+#
+
+name 'C3';
+
+flav 'Cheesecake (TFA)' => .1;
+flav 'Black Cherry (LA)' => .08;
+flav 'Ethyl Maltol 20% (CUSTOM)' => .01;
+
+fill vg => .3, pg => 1;
+base 100, pg => .5, vg =>.5;
+mg 13;
+size 32;

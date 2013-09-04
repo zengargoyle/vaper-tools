@@ -1,0 +1,18 @@
+
+#
+# Juice Talk Week 8 2013-08-07
+#
+# Note: Butterscotch sweetens the creamy
+# Try: Bavarian Cream + Vanilla Custard + Paladin Punch
+#
+
+name 'Fuzzy Custard';
+
+flav 'Vanilla Custard (TFA)' => .13;
+flav 'Juicy Peach (TFA)' => .03;
+flav 'Butterscotch (TFA)' => .01;
+
+fill vg => .3, pg => 1;
+base 100, vg => .5, pg => .5;
+mg 13;
+size 32;

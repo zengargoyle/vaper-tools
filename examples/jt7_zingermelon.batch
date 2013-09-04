@@ -1,0 +1,18 @@
+
+#
+# Juice Talk Week 7 2013-07-31
+#
+# Note: first use of Sour, may be off / need extra steeping
+#
+
+name 'Zingermelon';
+
+flav 'Watermelon (TFA)' => .08;
+flav 'Lemon Lime (TFA)' => .04;
+flav 'Sour (TFA)' => .04;  # steep
+flav 'Sweetener (TFA)' => .04;
+
+fill vg => .3, pg => 1;
+base 100, vg => .5, pg => .5;
+mg 13;
+size 32;

@@ -1,6 +1,0 @@
-
-name 'Wicked Summer';
-flav 'Strawberry (TFA)' => .08;
-flav 'Sweet Cream (TFA)' => .04;
-flav 'Absinthe (TFA)' => .04;
-

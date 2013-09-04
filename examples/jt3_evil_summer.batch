@@ -1,0 +1,18 @@
+
+#
+# Juice Talk Week 3 2013-07-03
+#
+# Note: first use of eJuice Me Up calculator, but not on screen yet.
+# still doing 12mg
+#
+
+name 'Evil Summer';
+
+flav 'Strawberry (TFA)' => .08;
+flav 'Sweet Cream (TFA)' => .08;
+flav 'Absinthe (TFA)' => .04;
+
+fill vg => .3, pg => 1;
+base 100, pg => .5, vg => .5;
+mg 12;
+size 32;

@@ -1,4 +1,0 @@
-name 'Fuzzy Custard';
-flav 'Vanilla Custard (TFA)' => .13;
-flav 'Juicy Peach (TFA)' => .03;
-flav 'Butterscotch (TFA)' => .01;

@@ -1,0 +1,17 @@
+
+#
+# Juice Talk Week 4 2013-07-10
+#
+
+name 'Chunkaccino';
+
+flav 'Cappuchino (TFA)' => .05;
+flav 'Sweet Cream (TFA)' => .03;
+flav 'Mocha (TFA)' => .02;
+flav 'Caramel (TFA)' => .05;
+flav 'Chocolate Double Clear (TFA)' => .05;
+
+fill vg => .3, pg => 1;
+base 100, pg => .5, vg => .5;
+mg 13;
+size 32;

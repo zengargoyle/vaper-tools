@@ -1,7 +1,15 @@
 
-# Juice Talk Week 9
+#
+# Juice Talk Week 9 2013-08-21
+#
 
 name 'Berry White';
+
 flav 'White Chocolate (TFA)' => .12;
 flav 'Raspberry Sweet (TFA)' => .06;
 flav 'Sweet Cream (TFA)' => .02;
+
+fill vg => .3, pg => 1;
+base 100, pg => .5, vg => .5;
+mg 13;
+size 32;

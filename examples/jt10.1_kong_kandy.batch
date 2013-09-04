@@ -1,0 +1,17 @@
+
+#
+# Juice Talk Week 10.1 Flash Show 2013-08-31
+#
+# Note: switched up to 60/40 PG/VG
+#
+
+name 'Kong Kandy';
+
+flav 'Vanilla (TFA)' => .12;
+flav 'Mint Candy (TFA)' => .065;
+flav 'Banana Cream (TFA)' => .015;
+
+fill vg => .4, pg => 1;
+base 100, pg => .5, vg => .5;
+mg 13;
+size 32;
