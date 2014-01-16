@@ -284,7 +284,7 @@ sub _to_lines {
   for my $fi (5,6) {
     if (exists $self->flavors->{$fi}) {
       my %c = ( pg => 0, vg => 0, unk => 0, splice @{ $self->flavors->{$fi} }, 2 );
-      push @lines, $self->flavors->{$fi}->[1];
+      push @lines, $self->flavors->{$fi}->[1]*100;
       push @lines, $self->flavors->{$fi}->[0];
       push @lines, $c{pg}*100;
       push @lines, $c{vg}*100;
